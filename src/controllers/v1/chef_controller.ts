@@ -5,6 +5,9 @@ import {
   addChef,
   updateChef,
   removeChef,
+  findAllChefDishes,
+  findAllChefRestaurants,
+  
 } from "../../handlers/chef_handler";
 
 const getAllChefs = async (req: Request, res: Response) => {
@@ -16,6 +19,18 @@ const getAllChefs = async (req: Request, res: Response) => {
   }
 };
 
+// const queryChef = async  (req: Request, res: Response) => {
+//   console.log("here");
+//   try {
+//     const value = req.query.value;
+//     console.log(value);
+//     const chefs = await findChefByQuery(value);
+//     res.json(chefs);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: "Unable to fetch chefs." });
+//   }
+// }
 const getChefByID = async (req: Request, res: Response) => {
   const chefId = req.params.id;
   try {
@@ -29,6 +44,40 @@ const getChefByID = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Unable to fetch the chef." });
   }
 };
+
+const getAllDishesOfChef = async (req: Request, res: Response) => {
+  const chefId = req.params.id;
+  try {
+    const chef = await findAllChefDishes(chefId);
+    if (!chef) {
+      res.status(404).json({ error: "Unable to fetch chef" });
+    }
+    const allDishes: any[] = [];
+    chef?.restaurants.forEach((restaurant: any) => {
+      allDishes.push(...restaurant.dishes);
+    });
+    res.json(allDishes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Unable to fetch chef or populate dishes." });
+  }
+};
+
+const getChefRestaurants = async (req: Request, res: Response) => {
+  const chefId = req.params.id;
+  try {
+    const chef = await findAllChefRestaurants(chefId);
+    if (!chef) {
+      return res.status(404).json({ error: "Chef not found." });
+    }
+
+    res.json(chef.restaurants);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Unable to fetch the chef." });
+  }
+};
+
 
 const postChef = async (req: Request, res: Response) => {
   const { name, image, description, restaurants } = req.body;
@@ -76,4 +125,4 @@ const deleteChef = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllChefs, getChefByID, postChef, putChef, deleteChef };
+export { getAllChefs, getChefByID, postChef, putChef, deleteChef, getAllDishesOfChef, getChefRestaurants, };

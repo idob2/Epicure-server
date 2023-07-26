@@ -6,12 +6,13 @@ import {
   updateRestaurant,
   removeRestaurant,
   findChefOfRestaurant,
+  findAllRestaurantDishes
 } from "../../handlers/restaurant_handler";
 import {
   deleteRestaurantFromChef,
   addRestaurantToChef,
 } from "../../handlers/chef_handler";
-import { Types } from "mongoose"; // Import Types from Mongoose
+import { Types } from "mongoose";
 
 const getAllRestaurants = async (req: Request, res: Response) => {
   try {
@@ -49,7 +50,7 @@ const getRestaurantChefByID = async (req: Request, res: Response) => {
     if (!chefOfRestaurant) {
       return res.status(404).json({ error: "Restaurant does not has chef." });
     }
-
+    
     res.json(chefOfRestaurant);
   } catch (error) {
     console.log(error);
@@ -126,6 +127,18 @@ const deleteRestaurant = async (req: Request, res: Response) => {
   }
 };
 
+const getDishesOfRestaurant = async (req: Request, res: Response) => {
+  const restaurantId = req.params.id; 
+  try{
+
+    const restaurant = await findAllRestaurantDishes(restaurantId);
+    res.json(restaurant);
+  } catch (error) {
+    return res.status(404).json({
+      error: "Restaurant not found.",
+    });
+  }
+}
 export {
   getAllRestaurants,
   getRestaurantByID,
@@ -133,4 +146,5 @@ export {
   putRestaurant,
   deleteRestaurant,
   getRestaurantChefByID,
+  getDishesOfRestaurant,
 };

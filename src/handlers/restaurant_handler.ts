@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import Restaurant from "../models/restaurant";
+import { ObjectId } from "mongodb";
 
 const findAllRestaurants = async () => {
   const allRestaurants = await Restaurant.find();
@@ -55,6 +56,46 @@ const findChefOfRestaurant = async (restaurantId: string) => {
   return restaurant;
 };
 
+const findAllRestaurantDishes = async (restauratnId: string) => {
+    const restaurant = await Restaurant.aggregate([
+        {$match: {_id: new Types.ObjectId(restauratnId)}},
+        {
+            $lookup: {
+                from: 'dishes',
+                localField: 'dishes',
+                foreignField: '_id',
+                as: 'dishes'
+            },
+        },
+    ]);
+
+    return restaurant[0];
+   
+}
+const deleteDishFromRestaurant = async (
+  restaurantId: ObjectId,
+  dishId: string
+) => {
+  const updatedRestaurant = await Restaurant.findOneAndUpdate(
+    restaurantId,
+    { $pull: { dishes: dishId } },
+    { new: true }
+  );
+  return updatedRestaurant;
+};
+
+const addDishToRestaurant = async (
+  restaurantId: ObjectId,
+  dishId: ObjectId
+) => {
+  const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+    restaurantId,
+    { $addToSet: { dishes: dishId } }, // add the dishId from the dishes list
+    { new: true }
+  );
+  return updatedRestaurant;
+};
+
 export {
   findAllRestaurants,
   findRestaurantsById,
@@ -62,4 +103,7 @@ export {
   updateRestaurant,
   removeRestaurant,
   findChefOfRestaurant,
+  deleteDishFromRestaurant,
+  addDishToRestaurant,
+  findAllRestaurantDishes,
 };

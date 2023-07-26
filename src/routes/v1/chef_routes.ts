@@ -5,6 +5,8 @@ import {
   postChef,
   putChef,
   deleteChef,
+  getAllDishesOfChef,
+  getChefRestaurants,
 } from "../../controllers/v1/chef_controller";
 
 const router = express.Router();
@@ -12,6 +14,10 @@ const router = express.Router();
 router.get("/",getAllChefs);
 
 router.get("/:id", getChefByID);
+
+router.get("/dishes/:id", getAllDishesOfChef);
+
+router.get("/restaurants/:id", getChefRestaurants);
 
 router.post("/", postChef);
 

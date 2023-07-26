@@ -11,47 +11,103 @@ const findChefById = async (chefId: string) => {
   return chef;
 };
 
-const addChef = async (name: string, image: string, description: string, restaurants: string) => {
-    const newChef = new Chef({
-        _id: 12,
-        name,
-        image,
-        description,
-        restaurants,
-      });
-      const savedChef = await newChef.save();
-      return savedChef;
-}
+const findAllChefRestaurants = async (chefId: string) => {
+    const chef = await Chef.findById(chefId).populate("restaurants");
+    return chef;
+};
 
-const updateChef = async (chefId:string, name: string, image: string, description: string, restaurants: string) => {
-    const updatedChef = await Chef.findByIdAndUpdate(
-        chefId,
-        { name, image, description, restaurants },
-        { new: true }
-      );
-      return updatedChef;
-}
+// const findChefByQuery = async ( value: any) => {
+//   console.log(value);
+//     const filteredChefs = await Chef.find({
+//         name: { $regex: value, $options: 'i' }
+//       });
+//     const filteredChefs = await Chef.find({
+//         name: { $regex: value, $options: 'i' }
+//       });
+//     const filteredChefs = await Chef.find({
+//         name: { $regex: value, $options: 'i' }
+//       });
+//     return filteredChefs;
+// } 
+const findAllChefDishes = async (chefId: string) => {
+  const chef = await Chef.findById(chefId).populate({
+    path: "restaurants",
+    populate: {
+      path: "dishes",
+      model: "Dish",
+    },
+  }).exec();
+  console.log(chef);
+  return chef;
+};
+const addChef = async (
+  name: string,
+  image: string,
+  description: string,
+  restaurants: string
+) => {
+  const newChef = new Chef({
+    _id: 12,
+    name,
+    image,
+    description,
+    restaurants,
+  });
+  const savedChef = await newChef.save();
+  return savedChef;
+};
 
-const removeChef = async (chefId:string) => {
-    const deletedChef = await Chef.findByIdAndDelete(chefId);
-    return deletedChef;
-}
+const updateChef = async (
+  chefId: string,
+  name: string,
+  image: string,
+  description: string,
+  restaurants: string
+) => {
+  const updatedChef = await Chef.findByIdAndUpdate(
+    chefId,
+    { name, image, description, restaurants },
+    { new: true }
+  );
+  return updatedChef;
+};
 
-const deleteRestaurantFromChef = async (chefId: ObjectId, restaurantId: string) => {
-    const updatedChef = await Chef.findByIdAndUpdate(
-        chefId, 
-        { $pull: { restaurants: restaurantId } }, // remove the restaurantId from the restaurants list
-        { new: true }
-      );
-    return updatedChef;
-}
+const removeChef = async (chefId: string) => {
+  const deletedChef = await Chef.findByIdAndDelete(chefId);
+  return deletedChef;
+};
 
-const addRestaurantToChef = async (chefId: ObjectId, restaurantId: ObjectId) => {
-    const updatedChef = await Chef.findByIdAndUpdate(
-        chefId, 
-        { $addToSet: { restaurants: restaurantId } }, // add the restaurantId from the restaurants list
-        { new: true }
-      );
-    return updatedChef;
-}
-export {findAllChefs, findChefById, addChef, updateChef, removeChef, deleteRestaurantFromChef, addRestaurantToChef};
+const deleteRestaurantFromChef = async (
+  chefId: ObjectId,
+  restaurantId: string
+) => {
+  const updatedChef = await Chef.findByIdAndUpdate(
+    chefId,
+    { $pull: { restaurants: restaurantId } }, // remove the restaurantId from the restaurants list
+    { new: true }
+  );
+  return updatedChef;
+};
+
+const addRestaurantToChef = async (
+  chefId: ObjectId,
+  restaurantId: ObjectId
+) => {
+  const updatedChef = await Chef.findByIdAndUpdate(
+    chefId,
+    { $addToSet: { restaurants: restaurantId } }, // add the restaurantId from the restaurants list
+    { new: true }
+  );
+  return updatedChef;
+};
+export {
+  findAllChefs,
+  findChefById,
+  addChef,
+  updateChef,
+  removeChef,
+  deleteRestaurantFromChef,
+  addRestaurantToChef,
+  findAllChefDishes,
+  findAllChefRestaurants
+};

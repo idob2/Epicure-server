@@ -6,6 +6,7 @@ import {
   putRestaurant,
   deleteRestaurant,
   getRestaurantChefByID,
+  getDishesOfRestaurant
 } from "../../controllers/v1/restaurant_controller";
 
 const router = express.Router();
@@ -21,6 +22,8 @@ router.put("/:id", putRestaurant);
 router.delete("/:id",deleteRestaurant);
 
 router.get("/chef/:id", getRestaurantChefByID);
+
+router.get("/dishes/:id", getDishesOfRestaurant);
 
 router.use("/v1/restaurants", router);
 
