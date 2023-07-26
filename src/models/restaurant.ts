@@ -11,6 +11,7 @@ const restaurantScheme = new mongoose.Schema({
   },
   chef:{
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Chef",
     required: true
   },
   dishes: [{
