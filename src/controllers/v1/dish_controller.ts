@@ -11,6 +11,7 @@ import {
   deleteDishFromRestaurant,
 } from "../../handlers/restaurant_handler";
 import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 const getAllDishes = async (req: Request, res: Response) => {
   try {
@@ -37,7 +38,7 @@ const getDishById = async (req: Request, res: Response) => {
 const postDish = async (req: Request, res: Response) => {
   const { name, price, image, ingredients, tags, restaurant } = req.body;
   try {
-    const dishId = new Types.ObjectId();
+    const dishId = new ObjectId();
     const newDish = await addDish(
       dishId,
       name,

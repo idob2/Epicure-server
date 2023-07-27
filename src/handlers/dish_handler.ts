@@ -15,7 +15,7 @@ const findDishById = async (dishId: string) => {
 };
 
 const addDish = async (
-  dishId: Types.ObjectId,  
+  dishId: ObjectId,  
   name: string,
   price: string,
   image: string,

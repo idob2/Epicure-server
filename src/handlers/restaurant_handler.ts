@@ -15,7 +15,7 @@ const findRestaurantsById = async (restaurantId: string) => {
 };
 
 const addRestaurant = async (
-  restaurantId: Types.ObjectId,
+  restaurantId: ObjectId,
   name: string,
   image: string,
   chef: string,
@@ -65,7 +65,7 @@ const findChefOfRestaurant = async (restaurantId: string) => {
 
 const findAllRestaurantDishes = async (restauratnId: string) => {
     const restaurant = await Restaurant.aggregate([
-        {$match: {_id: new Types.ObjectId(restauratnId)}},
+        {$match: {_id: new ObjectId(restauratnId)}},
         {
             $lookup: {
                 from: 'dishes',

@@ -7,13 +7,14 @@ import {
   removeRestaurant,
   findChefOfRestaurant,
   findAllRestaurantDishes,
+  deleteDishFromRestaurant,
 } from "../../handlers/restaurant_handler";
 import {
   deleteRestaurantFromChef,
   addRestaurantToChef,
 } from "../../handlers/chef_handler";
 import { removeDish } from "../../handlers/dish_handler";
-import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 const getAllRestaurants = async (req: Request, res: Response) => {
   try {
@@ -60,7 +61,7 @@ const getRestaurantChefByID = async (req: Request, res: Response) => {
 const postRestaurant = async (req: Request, res: Response) => {
   const { name, image, chef, dishes } = req.body;
   try {
-    const restaurantId = new Types.ObjectId();
+    const restaurantId = new ObjectId();
     const newRestaurant = await addRestaurant(
       restaurantId,
       name,
@@ -118,12 +119,14 @@ const deleteRestaurant = async (req: Request, res: Response) => {
       });
     }
     const restaurantDishes = deletedRestaurant.dishes;
-    restaurantDishes.forEach(
-      async (dish) => await removeDish(String(dish._id))
-    );
-    // deletedRestaurant.dishes = [];
-    // await deletedRestaurant.save();
-    
+    restaurantDishes.forEach(async (dish) => {
+      await removeDish(String(dish._id));
+      await deleteDishFromRestaurant(
+        new ObjectId(restaurantId),
+        String(dish._id)
+      );
+    });
+
     res.json(deletedRestaurant);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
