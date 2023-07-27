@@ -16,8 +16,12 @@ const chefSchema = new mongoose.Schema({
   restaurants: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Restaurant",
-    required: false
+    required: true
   }],
+  is_active: [{
+    type: Boolean,
+    required: true
+  }]
 });
 
 const Chef = mongoose.model("Chef", chefSchema);

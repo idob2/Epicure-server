@@ -5,7 +5,6 @@ import {
   postChef,
   putChef,
   deleteChef,
-  getAllDishesOfChef,
   getChefRestaurants,
 } from "../../controllers/v1/chef_controller";
 
@@ -15,9 +14,7 @@ router.get("/",getAllChefs);
 
 router.get("/:id", getChefByID);
 
-router.get("/dishes/:id", getAllDishesOfChef);
-
-router.get("/restaurants/:id", getChefRestaurants);
+router.get("/:id/restaurants", getChefRestaurants);
 
 router.post("/", postChef);
 
@@ -25,5 +22,7 @@ router.put("/:id",putChef);
 
 router.delete("/:id", deleteChef);
 
-router.use("/v1/chefs", router);
+// router.use("/chefs", router);
+
 export default router;
+

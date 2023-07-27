@@ -3,16 +3,18 @@ import Dish from "../models/dish";
 import Restaurant from "../models/restaurant";
 
 const findDataByQuery = async (value: any) => {
-  const filteredChefs = await Chef.find({
-    name: { $regex: value, $options: "i" },
-  });
-  const filteredRestaurants = await Restaurant.find({
-    name: { $regex: value, $options: "i" },
-  });
-  const filteredDishes = await Dish.find({
-    name: { $regex: value, $options: "i" },
-  });
-  return [filteredChefs, filteredRestaurants, filteredDishes];
+  const [filteredChefs, filteredRestaurants, filteredDishes] =
+    await Promise.all([
+      Chef.find({ name: { $regex: value, $options: "i" } }),
+      Restaurant.find({ name: { $regex: value, $options: "i" } }),
+      Dish.find({ name: { $regex: value, $options: "i" } }),
+    ]);
+
+  return {
+    chefs: filteredChefs,
+    restaurants: filteredRestaurants,
+    dishes: filteredDishes,
+  };
 };
 
 export { findDataByQuery };

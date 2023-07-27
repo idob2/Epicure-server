@@ -17,8 +17,12 @@ const restaurantScheme = new mongoose.Schema({
   dishes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Dish",
-    required: false
+    required: true
   }],
+  is_active: {
+    type:Boolean,
+    required: true
+  }
 });
 
 const Restaurant = mongoose.model("Restaurant", restaurantScheme);

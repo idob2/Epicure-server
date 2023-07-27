@@ -16,8 +16,8 @@ const getAllDishes = async (req: Request, res: Response) => {
   try {
     const dishes = await findAllDishes();
     res.json(dishes);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to fetch dishes." });
+  } catch (error: any) {
+    res.status(500).json({ error:error.message });
   }
 };
 
@@ -29,15 +29,13 @@ const getDishById = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Dish not found." });
     }
     res.json(dish);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Unable to fetch the dish." });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message});
   }
 };
 
 const postDish = async (req: Request, res: Response) => {
   const { name, price, image, ingredients, tags, restaurant } = req.body;
-  console.log(req.body);
   try {
     const dishId = new Types.ObjectId();
     const newDish = await addDish(
@@ -47,7 +45,7 @@ const postDish = async (req: Request, res: Response) => {
       image,
       ingredients,
       tags,
-      restaurant
+      restaurant,
     );
 
     const updatedRestaurant = await addDishToRestaurant(restaurant, dishId);
@@ -59,15 +57,14 @@ const postDish = async (req: Request, res: Response) => {
     }
 
     res.json(newDish);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Unable to create a new dish." });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 const putDish = async (req: Request, res: Response) => {
   const dishId = req.params.id;
-  const { name, price, image, ingredients, tags, restaurant } = req.body;
+  const { name, price, image, ingredients, tags, restaurant, is_active } = req.body;
   try {
     const updatedDish = await updateDish(
       dishId,
@@ -76,14 +73,15 @@ const putDish = async (req: Request, res: Response) => {
       image,
       ingredients,
       tags,
-      restaurant
+      restaurant,
+      is_active
     );
     if (!updatedDish) {
       return res.status(404).json({ error: "Dish not found." });
     }
     res.json(updatedDish);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to update the dish." });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -99,7 +97,6 @@ const deleteDish = async (req: Request, res: Response) => {
       restaurantId,
       dishId
     );
-    console.log(updatedRestaurant);
     if (!updatedRestaurant) {
       return res.status(404).json({
         error:
@@ -108,8 +105,8 @@ const deleteDish = async (req: Request, res: Response) => {
     }
 
     res.json(deletedDish);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to delete the dish." });
+  } catch (error: any) {
+    res.status(500).json({ error: error.log});
   }
 };
 

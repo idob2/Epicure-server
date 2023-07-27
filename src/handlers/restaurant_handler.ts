@@ -3,12 +3,14 @@ import Restaurant from "../models/restaurant";
 import { ObjectId } from "mongodb";
 
 const findAllRestaurants = async () => {
-  const allRestaurants = await Restaurant.find();
+  const allRestaurants = await Restaurant.find({
+    is_active: true,
+  });
   return allRestaurants;
 };
 
 const findRestaurantsById = async (restaurantId: string) => {
-  const restaurant = await Restaurant.findById(restaurantId);
+  const restaurant = await Restaurant.findOne({ _id: restaurantId, is_active: true });
   return restaurant;
 };
 
@@ -25,6 +27,7 @@ const addRestaurant = async (
     image,
     chef,
     dishes,
+    is_active: true
   });
   const savedRestaurant = await newRestaurant.save();
   return savedRestaurant;
@@ -35,11 +38,12 @@ const updateRestaurant = async (
   name: string,
   image: string,
   chef: string,
-  dishes: string[]
+  dishes: string[],
+  is_active: boolean,
 ) => {
   const updatedRestaurant = await Restaurant.findByIdAndUpdate(
     restaurnatId,
-    { name, image, chef, dishes },
+    { name, image, chef, dishes, is_active },
     { new: true }
   );
 
@@ -47,8 +51,11 @@ const updateRestaurant = async (
 };
 
 const removeRestaurant = async (restaurantId: string) => {
-  const deletedRestaurant = await Restaurant.findByIdAndDelete(restaurantId);
-  return deletedRestaurant;
+  const deletedRestaurant = await Restaurant.findByIdAndUpdate(
+    restaurantId,
+    { is_active: false },
+    { new: true }
+  );  return deletedRestaurant;
 };
 
 const findChefOfRestaurant = async (restaurantId: string) => {

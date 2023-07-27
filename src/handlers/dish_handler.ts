@@ -3,12 +3,14 @@ import Dish from "../models/dish";
 import { Types } from "mongoose";
 
 const findAllDishes = async () => {
-  const allDishes = await Dish.find();
+  const allDishes = await Dish.find({
+    is_active: true
+  });
   return allDishes;
 };
 
 const findDishById = async (dishId: string) => {
-  const dish = await Dish.findById(dishId);
+  const dish = await Dish.findById({ _id: dishId, is_active: true });
   return dish;
 };
 
@@ -29,6 +31,7 @@ const addDish = async (
     ingredients: ingredients,
     tags: tags,
     restaurant: restaurant,
+    is_active: true
   });
 
   const savedDish = await newDish.save();
@@ -42,19 +45,21 @@ const updateDish = async (
   image: string,
   ingredients: string,
   tags: string,
-  restaurant: ObjectId
+  restaurant: ObjectId,
+  is_Active: boolean
 ) => {
   const updatedDish = await Dish.findByIdAndUpdate(
     dishId,
-    { name, price, image, ingredients, tags, restaurant },
+    { name, price, image, ingredients, tags, restaurant, is_Active },
     { new: true }
   );
   return updatedDish;
 };
 
 const removeDish = async (dishId: string) => {
-  const deletedDish = await Dish.findByIdAndDelete(dishId);
-  console.log(deletedDish);
+  const deletedDish = await Dish.findByIdAndUpdate(dishId,
+    { is_active: false },
+    { new: true });
   return deletedDish;
 };
 

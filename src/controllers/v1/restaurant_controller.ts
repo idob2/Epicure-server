@@ -6,12 +6,13 @@ import {
   updateRestaurant,
   removeRestaurant,
   findChefOfRestaurant,
-  findAllRestaurantDishes
+  findAllRestaurantDishes,
 } from "../../handlers/restaurant_handler";
 import {
   deleteRestaurantFromChef,
   addRestaurantToChef,
 } from "../../handlers/chef_handler";
+import { removeDish } from "../../handlers/dish_handler";
 import { Types } from "mongoose";
 
 const getAllRestaurants = async (req: Request, res: Response) => {
@@ -32,7 +33,6 @@ const getRestaurantByID = async (req: Request, res: Response) => {
     }
     res.json(restaurant);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Unable to fetch the restaurant." });
   }
 };
@@ -50,17 +50,15 @@ const getRestaurantChefByID = async (req: Request, res: Response) => {
     if (!chefOfRestaurant) {
       return res.status(404).json({ error: "Restaurant does not has chef." });
     }
-    
+
     res.json(chefOfRestaurant);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Unable to fetch the restaurant." });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 const postRestaurant = async (req: Request, res: Response) => {
   const { name, image, chef, dishes } = req.body;
-  console.log(req.body);
   try {
     const restaurantId = new Types.ObjectId();
     const newRestaurant = await addRestaurant(
@@ -79,29 +77,29 @@ const postRestaurant = async (req: Request, res: Response) => {
     }
 
     res.json(newRestaurant);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Unable to create a new restaurant." });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 const putRestaurant = async (req: Request, res: Response) => {
   const restaurnatId = req.params.id;
-  const { name, image, chef, dishes } = req.body;
+  const { name, image, chef, dishes, is_active } = req.body;
   try {
     const updatedRestaurant = await updateRestaurant(
       restaurnatId,
       name,
       image,
       chef,
-      dishes
+      dishes,
+      is_active
     );
     if (!updatedRestaurant) {
       return res.status(404).json({ error: "Restaurant not found." });
     }
     res.json(updatedRestaurant);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to update the restaurant." });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -114,31 +112,33 @@ const deleteRestaurant = async (req: Request, res: Response) => {
     }
     const chefId = deletedRestaurant.chef;
     const updatedChef = await deleteRestaurantFromChef(chefId, restaurantId);
-    console.log(updatedChef);
     if (!updatedChef) {
       return res.status(404).json({
         error: "Chef not found or the restaurant was not linked to any chef.",
       });
     }
-
+    const restaurantDishes = deletedRestaurant.dishes;
+    restaurantDishes.forEach(
+      async (dish) => await removeDish(String(dish._id))
+    );
+    // deletedRestaurant.dishes = [];
+    // await deletedRestaurant.save();
+    
     res.json(deletedRestaurant);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to delete the restaurant." });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 const getDishesOfRestaurant = async (req: Request, res: Response) => {
-  const restaurantId = req.params.id; 
-  try{
-
+  const restaurantId = req.params.id;
+  try {
     const restaurant = await findAllRestaurantDishes(restaurantId);
     res.json(restaurant);
-  } catch (error) {
-    return res.status(404).json({
-      error: "Restaurant not found.",
-    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
-}
+};
 export {
   getAllRestaurants,
   getRestaurantByID,

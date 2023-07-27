@@ -13,6 +13,6 @@ router.put("/:id", putDish);
 
 router.delete("/:id", deleteDish);
 
-router.use("/v1/dishes", router);
+// router.use("/dishes", router);
 
 export default router;

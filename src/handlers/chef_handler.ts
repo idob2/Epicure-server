@@ -2,44 +2,22 @@ import { ObjectId } from "mongodb";
 import Chef from "../models/chef";
 
 const findAllChefs = async () => {
-  const allChefs = await Chef.find();
+  const allChefs = await Chef.find({
+    is_active: true
+  });
   return allChefs;
 };
 
 const findChefById = async (chefId: string) => {
-  const chef = await Chef.findById(chefId);
+  const chef = await Chef.findById({ _id: chefId, is_active: true });
   return chef;
 };
 
 const findAllChefRestaurants = async (chefId: string) => {
-    const chef = await Chef.findById(chefId).populate("restaurants");
+    const chef = await Chef.findById({ _id: chefId, is_active: true }).populate("restaurants");
     return chef;
 };
 
-// const findChefByQuery = async ( value: any) => {
-//   console.log(value);
-//     const filteredChefs = await Chef.find({
-//         name: { $regex: value, $options: 'i' }
-//       });
-//     const filteredChefs = await Chef.find({
-//         name: { $regex: value, $options: 'i' }
-//       });
-//     const filteredChefs = await Chef.find({
-//         name: { $regex: value, $options: 'i' }
-//       });
-//     return filteredChefs;
-// } 
-const findAllChefDishes = async (chefId: string) => {
-  const chef = await Chef.findById(chefId).populate({
-    path: "restaurants",
-    populate: {
-      path: "dishes",
-      model: "Dish",
-    },
-  }).exec();
-  console.log(chef);
-  return chef;
-};
 const addChef = async (
   name: string,
   image: string,
@@ -47,11 +25,11 @@ const addChef = async (
   restaurants: string
 ) => {
   const newChef = new Chef({
-    _id: 12,
     name,
     image,
     description,
     restaurants,
+    is_active: true
   });
   const savedChef = await newChef.save();
   return savedChef;
@@ -62,18 +40,21 @@ const updateChef = async (
   name: string,
   image: string,
   description: string,
-  restaurants: string
+  restaurants: string,
+  is_active: boolean
 ) => {
   const updatedChef = await Chef.findByIdAndUpdate(
     chefId,
-    { name, image, description, restaurants },
+    { name, image, description, restaurants, is_active },
     { new: true }
   );
   return updatedChef;
 };
 
 const removeChef = async (chefId: string) => {
-  const deletedChef = await Chef.findByIdAndDelete(chefId);
+  const deletedChef = await Chef.findByIdAndUpdate(chefId,
+    { is_active: false },
+    { new: true });
   return deletedChef;
 };
 
@@ -108,6 +89,5 @@ export {
   removeChef,
   deleteRestaurantFromChef,
   addRestaurantToChef,
-  findAllChefDishes,
   findAllChefRestaurants
 };

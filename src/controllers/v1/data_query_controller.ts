@@ -6,9 +6,8 @@ const queryDataByName = async  (req: Request, res: Response) => {
       const value = req.query.value;
       const chefs = await findDataByQuery(value);
       res.json(chefs);
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: "Unable to fetch chefs." });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   };
 
