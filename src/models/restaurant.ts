@@ -22,6 +22,10 @@ const restaurantScheme = new mongoose.Schema({
   is_active: {
     type:Boolean,
     required: true
+  },
+  ranking: {
+    type: String,
+    required: true
   }
 });
 

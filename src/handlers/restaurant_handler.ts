@@ -19,7 +19,8 @@ const addRestaurant = async (
   name: string,
   image: string,
   chef: string,
-  dishes: string[]
+  dishes: string[],
+  ranking: String
 ) => {
   const newRestaurant = new Restaurant({
     _id: restaurantId,
@@ -27,7 +28,8 @@ const addRestaurant = async (
     image,
     chef,
     dishes,
-    is_active: true
+    is_active: true,
+    ranking
   });
   const savedRestaurant = await newRestaurant.save();
   return savedRestaurant;
@@ -40,10 +42,11 @@ const updateRestaurant = async (
   chef: string,
   dishes: string[],
   is_active: boolean,
+  ranking: string
 ) => {
   const updatedRestaurant = await Restaurant.findByIdAndUpdate(
     restaurnatId,
-    { name, image, chef, dishes, is_active },
+    { name, image, chef, dishes, is_active, ranking },
     { new: true }
   );
 

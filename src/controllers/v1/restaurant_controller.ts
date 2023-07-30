@@ -59,7 +59,7 @@ const getRestaurantChefByID = async (req: Request, res: Response) => {
 };
 
 const postRestaurant = async (req: Request, res: Response) => {
-  const { name, image, chef, dishes } = req.body;
+  const { name, image, chef, dishes, ranking } = req.body;
   try {
     const restaurantId = new ObjectId();
     const newRestaurant = await addRestaurant(
@@ -67,7 +67,8 @@ const postRestaurant = async (req: Request, res: Response) => {
       name,
       image,
       chef,
-      dishes
+      dishes,
+      ranking
     );
 
     const updatedChef = await addRestaurantToChef(chef, restaurantId);
@@ -85,7 +86,8 @@ const postRestaurant = async (req: Request, res: Response) => {
 
 const putRestaurant = async (req: Request, res: Response) => {
   const restaurnatId = req.params.id;
-  const { name, image, chef, dishes, is_active } = req.body;
+  const { name, image, chef, dishes, is_active, ranking } = req.body;
+
   try {
     const updatedRestaurant = await updateRestaurant(
       restaurnatId,
@@ -93,7 +95,8 @@ const putRestaurant = async (req: Request, res: Response) => {
       image,
       chef,
       dishes,
-      is_active
+      is_active,
+      ranking
     );
     if (!updatedRestaurant) {
       return res.status(404).json({ error: "Restaurant not found." });
