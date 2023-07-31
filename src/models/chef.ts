@@ -18,10 +18,10 @@ const chefSchema = new mongoose.Schema({
     ref: "Restaurant",
     required: true
   }],
-  is_active: [{
+  is_active: {
     type: Boolean,
     required: true
-  }]
+  }
 });
 
 const Chef = mongoose.model("Chef", chefSchema);

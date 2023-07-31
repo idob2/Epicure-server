@@ -22,7 +22,7 @@ const addChef = async (
   name: string,
   image: string,
   description: string,
-  restaurants: string
+  restaurants: string[]
 ) => {
   const newChef = new Chef({
     name,
