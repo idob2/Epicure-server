@@ -5,6 +5,5 @@ const router = express.Router();
 
 router.get("/query/search", queryDataByName);
 
-// router.use("/", router);
 
 export default router;

@@ -6,8 +6,9 @@ import {
   putRestaurant,
   deleteRestaurant,
   getRestaurantChefByID,
-  getDishesOfRestaurant
+  getDishesOfRestaurant,
 } from "../../controllers/v1/restaurant_controller";
+import { authMiddleware } from "../../services/auth.service";
 
 const router = express.Router();
 
@@ -15,16 +16,14 @@ router.get("/", getAllRestaurants);
 
 router.get("/:id", getRestaurantByID);
 
-router.post("/", postRestaurant);
+router.post("/", authMiddleware, postRestaurant);
 
-router.put("/:id", putRestaurant);
+router.put("/:id", authMiddleware, putRestaurant);
 
-router.delete("/:id",deleteRestaurant);
+router.delete("/:id", authMiddleware, deleteRestaurant);
 
 router.get("/:id/chef", getRestaurantChefByID);
 
 router.get("/:id/dishes", getDishesOfRestaurant);
-
-// router.use("/restaurants", router);
 
 export default router;

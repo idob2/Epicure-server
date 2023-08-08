@@ -17,7 +17,6 @@ const restaurantScheme = new mongoose.Schema({
   dishes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Dish",
-    required: true
   }],
   is_active: {
     type:Boolean,

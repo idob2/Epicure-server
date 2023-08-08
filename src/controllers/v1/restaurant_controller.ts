@@ -25,6 +25,8 @@ const getAllRestaurants = async (req: Request, res: Response) => {
   }
 };
 
+
+
 const getRestaurantByID = async (req: Request, res: Response) => {
   const restaurantId = req.params.id;
   try {

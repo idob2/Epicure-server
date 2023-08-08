@@ -31,6 +31,7 @@ const addChef = async (
     restaurants,
     is_active: true
   });
+
   const savedChef = await newChef.save();
   return savedChef;
 };

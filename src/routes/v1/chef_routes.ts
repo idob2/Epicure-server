@@ -7,6 +7,7 @@ import {
   deleteChef,
   getChefRestaurants,
 } from "../../controllers/v1/chef_controller";
+import { authMiddleware } from "../../services/auth.service";
 
 const router = express.Router();
 
@@ -16,13 +17,12 @@ router.get("/:id", getChefByID);
 
 router.get("/:id/restaurants", getChefRestaurants);
 
-router.post("/", postChef);
+router.post("/", authMiddleware, postChef);
 
-router.put("/:id",putChef);
+router.put("/:id", authMiddleware, putChef);
 
-router.delete("/:id", deleteChef);
+router.delete("/:id", authMiddleware, deleteChef);
 
-// router.use("/chefs", router);
 
 export default router;
 

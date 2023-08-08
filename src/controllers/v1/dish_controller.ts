@@ -48,7 +48,7 @@ const postDish = async (req: Request, res: Response) => {
       tags,
       restaurant,
     );
-
+      console.log(newDish)
     const updatedRestaurant = await addDishToRestaurant(restaurant, dishId);
     if (!updatedRestaurant) {
       return res.status(404).json({
