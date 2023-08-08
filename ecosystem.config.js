@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name   : "Eoicure-server",
+    name   : "Epicure-server",
     script : "nodemon ./src/app.ts"
   }],
   deploy: {
