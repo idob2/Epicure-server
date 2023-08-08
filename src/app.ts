@@ -7,8 +7,10 @@ import apiRouter from "./routes/api_router";
 require('dotenv').config();
 
 const app = express();
+const allowedOrigins = ['http://ec2-18-117-229-138.us-east-2.compute.amazonaws.com', 'http://localhost:3000'];
+
 app.use(cors({
-  
+  origin: allowedOrigins,
 }));
 
 // Add middleware before routes
