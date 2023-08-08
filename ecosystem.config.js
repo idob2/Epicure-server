@@ -24,7 +24,7 @@ module.exports = {
 			ssh_options: "StrictHostKeyChecking=no",
 
 
-			'post-deploy': "mkdir -p logs && npm i && pm2 reload ecosystem.json --env staging",
+			'post-deploy': "mkdir -p logs && npm i && pm2 reload ecosystem.config.js --env staging",
 
 
 			"pre-deploy-local": "echo 'Deploying code to servers'",
