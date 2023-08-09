@@ -24,8 +24,8 @@ app.get('/', (req:any, res:any) => {
   res.send("This is the Epicure server");
 });
  
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Web Server is listening at port ' + (process.env.PORT || 3000));
+app.listen(process.env.PORT || 8080, () => {
+  console.log('Web Server is listening at port ' + (process.env.PORT || 8080));
 });
 
 dbConnect();
