@@ -28,5 +28,9 @@
     "mogoose": "^0.0.1-security",
     "mongodb": "^5.7.0",
     "mongoose": "^7.4.0"
+  },
+  "engines": {
+    "node": "18.16.1"
   }
+  
 }
