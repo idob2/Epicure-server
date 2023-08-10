@@ -29,7 +29,7 @@ module.exports = {
 			ssh_options: "StrictHostKeyChecking=no",
 
 
-			'post-deploy': "mkdir -p logs && npm i && pm2 reload ecosystem.config.js --env staging",
+			'post-deploy': `export DATABASE_NAME=${process.env['DATABASE_NAME']} && export DATABASE_PASSWORD=${process.env['DATABASE_PASSWORD']} && process.env.DATABASE_NAMEmkdir -p logs && npm i && pm2 reload ecosystem.config.js --env staging`,
 
 
 			"pre-deploy-local": "echo 'Deploying code to servers'",
