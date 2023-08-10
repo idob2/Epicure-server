@@ -4,7 +4,6 @@ module.exports = {
     script : "ts-node ./src/app.ts",
 	env: {
 		NODE_ENV: "staging",
-		PRIVATE_ACCESS_KEY: process.env,PRIVATE_ACCESS_KEY,
 		DATABASE_NAME: process.env.DATABASE_NAME,
 		DATABASE_PASSWORD: process.env.DATABASE_PASSWORD
       },
