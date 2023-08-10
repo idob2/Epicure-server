@@ -6,7 +6,7 @@ mongoose.set("strictQuery", false)
 
 mongoose
   .connect(
-    `mongodb+srv://ido1403:g4Za8rkHHOpXKP0n@cluster0.iiwi5ht.mongodb.net/Epicure`
+    `mongodb+srv://${process.env['DATABASE_NAME']}:${process.env['DATABASE_PASSWORD']}@cluster0.iiwi5ht.mongodb.net/Epicure`
   )
 
   .then(() => {

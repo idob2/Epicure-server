@@ -34,7 +34,9 @@ module.exports = {
 
 			"pre-deploy-local": "echo 'Deploying code to servers'",
 			env: {
-				NODE_ENV: "staging"
+				NODE_ENV: "staging",
+				DATABASE_NAME: process.env.DATABASE_NAME,
+				DATABASE_PASSWORD: process.env.DATABASE_PASSWORD
 			}
 		}
 	}
