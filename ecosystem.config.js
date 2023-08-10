@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name   : "Epicure-server",
-    script : "tsnode ./src/app.ts"
+    script : "npx ts-node ./src/app.ts"
   }],
   deploy: {
 		staging: {
@@ -24,7 +24,7 @@ module.exports = {
 			ssh_options: "StrictHostKeyChecking=no",
 
 
-			'post-deploy': "mkdir -p logs && npm i && pm2 reload ecosystem.config.js --env staging && ts-node ./src/app.ts",
+			'post-deploy': "mkdir -p logs && npm i && pm2 reload ecosystem.config.js --env staging && npx ts-node ./src/app.ts",
 
 
 			"pre-deploy-local": "echo 'Deploying code to servers'",
