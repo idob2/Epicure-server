@@ -1,7 +1,8 @@
 module.exports = {
   apps : [{
     name   : "Epicure-server",
-    script : "ts-node ./src/app.ts"
+    script : "ts-node ./src/app.ts",
+	node_args: '--version 18.17.0',
   }],
   deploy: {
 		staging: {
