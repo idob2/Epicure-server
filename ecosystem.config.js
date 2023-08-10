@@ -5,11 +5,11 @@ module.exports = {
   }],
   deploy: {
 		staging: {
-			key: "/Users/idobar/Skills/Aws/EpicureAppKey.pem",
+			key: "/Users/idobar/Skills/Aws/SkillsEpicureKey.pem",
 			user: "ubuntu",
 
 
-			host: ["ec2-3-137-173-135.us-east-2.compute.amazonaws.com"],
+			host: ["ec2-18-117-229-138.us-east-2.compute.amazonaws.com"],
 
 
 			ref: "origin/dev",
