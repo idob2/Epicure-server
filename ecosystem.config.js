@@ -36,7 +36,8 @@ module.exports = {
 			env: {
 				NODE_ENV: "staging",
 				DATABASE_NAME: process.env.DATABASE_NAME,
-				DATABASE_PASSWORD: process.env.DATABASE_PASSWORD
+				DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
+				PRIVATE_ACCESS_KEY: process.env.PRIVATE_ACCESS_KEY
 			}
 		}
 	}
