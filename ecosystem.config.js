@@ -2,8 +2,8 @@ module.exports = {
   apps : [{
     name   : "Epicure-server",
     script : "ts-node ./src/app.ts",
-	node_args: '--version 18.17.0',
-  }],
+	node_args: '-r dotenv/config -r ts-node/register -r tsconfig-paths/register -r tsconfig-paths-bootstrap -r ./src/server.ts',
+}],
   deploy: {
 		staging: {
 			key: "/Users/idobar/Skills/Aws/SkillsEpicureKey.pem",
