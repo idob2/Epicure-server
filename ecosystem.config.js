@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name   : "Epicure-server",
-    script : "nodemon ./src/app.ts"
+    script : "ts-node ./src/app.ts"
   }],
   deploy: {
 		staging: {
