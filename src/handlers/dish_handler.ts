@@ -17,7 +17,7 @@ const findDishById = async (dishId: string) => {
 const addDish = async (
   dishId: ObjectId,  
   name: string,
-  price: string,
+  price: number,
   image: string,
   ingredients: string,
   tags: string,
@@ -41,7 +41,7 @@ const addDish = async (
 const updateDish = async (
   dishId: string,
   name: string,
-  price: string,
+  price: number,
   image: string,
   ingredients: string,
   tags: string,
