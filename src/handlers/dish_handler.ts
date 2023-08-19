@@ -1,12 +1,33 @@
 import { ObjectId } from "mongodb";
 import Dish from "../models/dish";
 import { Types } from "mongoose";
+import { IRestaurant } from "../interfaces/IRestaurant";
 
 const findAllDishes = async () => {
   const allDishes = await Dish.find({
-    is_active: true
+    is_active: true,
   });
   return allDishes;
+};
+
+const getAllDishesPopulated = async () => {
+  // Get all dishes and populate the 'restaurant' field with only the 'name' attribute
+  const dishes = await Dish.find({
+    is_active: true,
+  }).populate("restaurant", "name");
+
+  // Transforming the result to match the format you provided
+  const result = dishes.map((dish) => ({
+    _id: dish._id,
+    name: dish.name,
+    image: dish.image,
+    price: dish.price,
+    ingredients: dish.ingredients,
+    tags: dish.tags,
+    restaurant: dish.restaurant._id,
+    restaurant_name: (dish.restaurant as unknown as IRestaurant).name,
+  }));
+  return result;
 };
 
 const findDishById = async (dishId: string) => {
@@ -15,7 +36,7 @@ const findDishById = async (dishId: string) => {
 };
 
 const addDish = async (
-  dishId: ObjectId,  
+  dishId: ObjectId,
   name: string,
   price: number,
   image: string,
@@ -31,7 +52,7 @@ const addDish = async (
     ingredients: ingredients,
     tags: tags,
     restaurant: restaurant,
-    is_active: true
+    is_active: true,
   });
 
   const savedDish = await newDish.save();
@@ -57,10 +78,44 @@ const updateDish = async (
 };
 
 const removeDish = async (dishId: string) => {
-  const deletedDish = await Dish.findByIdAndUpdate(dishId,
+  const deletedDish = await Dish.findByIdAndUpdate(
+    dishId,
     { is_active: false },
-    { new: true });
+  );
   return deletedDish;
 };
 
-export { findAllDishes, findDishById, addDish, updateDish, removeDish };
+const removeAllGivenDishes = async (dishes: ObjectId[]) => {
+  await Dish.updateMany(
+    { _id: { $in: dishes } },
+    { is_active: false }
+  );
+};
+
+const updateDishReferences = async (restaurantId: string, newDishes: string[], existingDishes: string[]) => {
+  // Add the restaurant reference to new dishes that are active
+  await Dish.updateMany(
+      { _id: { $in: newDishes }, is_active: true },
+      { $set: { restaurant: restaurantId } }
+  );
+
+  // Set `is_active` to false for the previous active dishes not in the new list
+  await Dish.updateMany(
+      { _id: { $nin: newDishes, $in: existingDishes }, is_active: true },
+      { $set: { is_active: false } }
+  );
+};
+
+
+
+export {
+  findAllDishes,
+  findDishById,
+  addDish,
+  updateDish,
+  removeDish,
+  getAllDishesPopulated,
+  removeAllGivenDishes,
+  updateDishReferences,
+};
+

@@ -30,7 +30,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     // const savedUser = await addUser(username, password, token);
 
-    console.log(token);
+    // console.log(token);
     res.status(200).json({ accessToken: token });
   } catch (error) {
     res.status(500).json({ message: getErrorMessage(error) });

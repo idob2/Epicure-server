@@ -6,12 +6,15 @@ import {
   putChef,
   deleteChef,
   getChefRestaurants,
+  getAllRestaurantsPopulat,
 } from "../../controllers/v1/chef_controller";
 import { authMiddleware } from "../../services/auth.service";
 
 const router = express.Router();
 
 router.get("/",getAllChefs);
+
+router.get("/populated",getAllRestaurantsPopulat);
 
 router.get("/:id", getChefByID);
 

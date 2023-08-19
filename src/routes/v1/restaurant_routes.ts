@@ -7,12 +7,17 @@ import {
   deleteRestaurant,
   getRestaurantChefByID,
   getDishesOfRestaurant,
+  getAllRestaurantsPopulat
 } from "../../controllers/v1/restaurant_controller";
 import { authMiddleware } from "../../services/auth.service";
 
 const router = express.Router();
 
 router.get("/", getAllRestaurants);
+
+router.get("/populated", getAllRestaurantsPopulat);
+
+
 
 router.get("/:id", getRestaurantByID);
 
