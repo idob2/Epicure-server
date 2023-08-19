@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import Chef from "../models/chef";
+import { IRestaurant } from "../interfaces/IRestaurant";
 
 const findAllChefs = async () => {
   const allChefs = await Chef.find({
@@ -7,6 +8,24 @@ const findAllChefs = async () => {
   });
   return allChefs;
 };
+
+const getAllChefsPopulated = async () => {
+    const chefs = await Chef.find({ is_active: true })
+      .populate("restaurants", "name"); // populate restaurants and select only the name field
+    // Transforming the result to match the format you provided
+    console.log(chefs);
+    const result = chefs.map((chef) => ({
+      _id: chef._id,
+      name: chef.name,
+      image: chef.image,
+      description: chef.description,
+      restaurants: chef.restaurants.map(restaurant => restaurant._id),
+      restaurants_names: chef.restaurants.length > 0
+      ? (chef.restaurants as unknown as IRestaurant[]).map((restaurant) => restaurant.name)
+      : []    }));
+    return result;
+};
+
 
 const findChefById = async (chefId: string) => {
   const chef = await Chef.findById({ _id: chefId, is_active: true });
@@ -82,6 +101,37 @@ const addRestaurantToChef = async (
   );
   return updatedChef;
 };
+
+const removeRestaurantFromOtherChefs = async(restaurants: ObjectId[], chefId: string) =>{
+   const existingChefsWithRestaurants = await Chef.find({ restaurants: { $in: restaurants } });
+
+   for (const chef of existingChefsWithRestaurants) {
+     if (chef._id.toString() !== chefId) {
+       chef.restaurants = chef.restaurants.filter(
+         (restId: any) => !restaurants.includes(restId.toString())
+       );
+       await chef.save();  
+     }
+   }
+};
+const updateChefReferences = async (restaurantId: string, newChefId: string, existingChefId: string) => {
+  if (existingChefId.toString() !== newChefId) {
+      // Remove restaurant reference from the previous active chef
+      await Chef.findOneAndUpdate(
+          { _id: existingChefId, is_active: true },
+          { $pull: { restaurants: restaurantId } }
+      );
+
+      // Add restaurant reference to the new active chef
+      await Chef.findOneAndUpdate(
+          { _id: newChefId, is_active: true },
+          { $addToSet: { restaurants: restaurantId } }
+      );
+  }
+};
+
+
+
 export {
   findAllChefs,
   findChefById,
@@ -90,5 +140,8 @@ export {
   removeChef,
   deleteRestaurantFromChef,
   addRestaurantToChef,
-  findAllChefRestaurants
+  findAllChefRestaurants,
+  getAllChefsPopulated,
+  removeRestaurantFromOtherChefs,
+  updateChefReferences,
 };

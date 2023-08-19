@@ -8,12 +8,15 @@ import {
   findChefOfRestaurant,
   findAllRestaurantDishes,
   deleteDishFromRestaurant,
+  getAllRestaurantsPopulated,
+  removeNewDishesFromOtherRestaurants,
 } from "../../handlers/restaurant_handler";
 import {
   deleteRestaurantFromChef,
   addRestaurantToChef,
+  updateChefReferences,
 } from "../../handlers/chef_handler";
-import { removeDish } from "../../handlers/dish_handler";
+import { removeDish, updateDishReferences } from "../../handlers/dish_handler";
 import { ObjectId } from "mongodb";
 
 const getAllRestaurants = async (req: Request, res: Response) => {
@@ -24,6 +27,16 @@ const getAllRestaurants = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Unable to fetch restaurant." });
   }
 };
+
+const getAllRestaurantsPopulat = async (req: Request, res: Response) => {
+  try {
+    const restaurants = await getAllRestaurantsPopulated();
+    res.json(restaurants);
+  } catch (error) {
+    res.status(500).json({ error: "Unable to fetch restaurant." });
+  }
+};
+
 
 
 
@@ -87,27 +100,34 @@ const postRestaurant = async (req: Request, res: Response) => {
 };
 
 const putRestaurant = async (req: Request, res: Response) => {
-  const restaurnatId = req.params.id;
+  const restaurantId = req.params.id;
   const { name, image, chef, dishes, is_active, ranking } = req.body;
 
   try {
-    const updatedRestaurant = await updateRestaurant(
-      restaurnatId,
-      name,
-      image,
-      chef,
-      dishes,
-      is_active,
-      ranking
-    );
-    if (!updatedRestaurant) {
-      return res.status(404).json({ error: "Restaurant not found." });
-    }
-    res.json(updatedRestaurant);
+      const existingRestaurant = await findRestaurantsById(restaurantId);
+
+      if (!existingRestaurant) {
+          return res.status(404).json({ error: "Restaurant not found." });
+      }
+      await removeNewDishesFromOtherRestaurants(dishes, restaurantId);
+      await updateDishReferences(restaurantId, dishes, existingRestaurant.dishes.map(id => id.toString()));
+      await updateChefReferences(restaurantId, chef, existingRestaurant.chef.toString());
+      const updatedRestaurant = await updateRestaurant(
+          restaurantId,
+          name,
+          image,
+          chef,
+          dishes,
+          is_active,
+          ranking
+      );
+
+      res.json(updatedRestaurant);
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
   }
 };
+
 
 const deleteRestaurant = async (req: Request, res: Response) => {
   const restaurantId = req.params.id;
@@ -155,4 +175,5 @@ export {
   deleteRestaurant,
   getRestaurantChefByID,
   getDishesOfRestaurant,
+  getAllRestaurantsPopulat
 };
