@@ -108,12 +108,17 @@ const updateRestaurant = async (
 };
 
 const removeRestaurant = async (restaurantId: string) => {
-  const restaurant = await Restaurant.findById(restaurantId);
-  if (restaurant) {
-    restaurant.is_active = false;
-    await restaurant.save();
-    return restaurant;
-  }
+  const restaurants = [new ObjectId(restaurantId)];
+  await deleteAllGivenRestaurants(restaurants);
+  const newRestaurant = await findRestaurantsById(restaurantId);
+  return newRestaurant;
+  // const restaurant = await Restaurant.findById(restaurantId);
+  // if (restaurant) {
+  //   restaurant.is_active = false;
+  //   console.log("here");
+  //   await restaurant.save();
+  //   return restaurant;
+  // }
 };
 
 const findChefOfRestaurant = async (restaurantId: string) => {
