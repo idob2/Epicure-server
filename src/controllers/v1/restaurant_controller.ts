@@ -136,13 +136,7 @@ const deleteRestaurant = async (req: Request, res: Response) => {
     if (!restaurant) {
       return res.status(404).json({ error: "Restaurant not found." });
     }
-    const chefId = restaurant.chef;
-    const updatedChef = await deleteRestaurantFromChef(chefId, restaurantId);
-    if (!updatedChef) {
-      return res.status(404).json({
-        error: "Chef not found or the restaurant was not linked to any chef.",
-      });
-    }
+
     const restaurantDishes = restaurant.dishes;
     restaurantDishes.forEach(async (dish) => {
       await removeDish(String(dish._id));
@@ -151,6 +145,14 @@ const deleteRestaurant = async (req: Request, res: Response) => {
         String(dish._id)
       );
     });
+    const chefId = restaurant.chef;
+    const updatedChef = await deleteRestaurantFromChef(chefId, restaurantId);
+    if (!updatedChef) {
+      return res.status(404).json({
+        error: "Chef not found or the restaurant was not linked to any chef.",
+      });
+    }
+    
     const deletedRestaurant = await removeRestaurant(restaurantId);
     if (!deletedRestaurant) {
       return res.status(404).json({ error: "Restaurant not found." });
