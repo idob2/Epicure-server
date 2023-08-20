@@ -11,12 +11,10 @@ const findAllDishes = async () => {
 };
 
 const getAllDishesPopulated = async () => {
-  // Get all dishes and populate the 'restaurant' field with only the 'name' attribute
   const dishes = await Dish.find({
     is_active: true,
   }).populate("restaurant", "name");
 
-  // Transforming the result to match the format you provided
   const result = dishes.map((dish) => ({
     _id: dish._id,
     name: dish.name,
@@ -86,20 +84,23 @@ const removeDish = async (dishId: string) => {
 };
 
 const removeAllGivenDishes = async (dishes: ObjectId[]) => {
-  await Dish.updateMany(
-    { _id: { $in: dishes } },
-    { is_active: false }
-  );
+  if(dishes){
+    dishes.forEach(async (dishId) => {
+      const dish = await findDishById(dishId.toString());
+      if (dish) {
+        dish.is_active = false;
+        await dish.save();
+      }
+    });
+  }
 };
 
 const updateDishReferences = async (restaurantId: string, newDishes: string[], existingDishes: string[]) => {
-  // Add the restaurant reference to new dishes that are active
   await Dish.updateMany(
       { _id: { $in: newDishes }, is_active: true },
       { $set: { restaurant: restaurantId } }
   );
 
-  // Set `is_active` to false for the previous active dishes not in the new list
   await Dish.updateMany(
       { _id: { $nin: newDishes, $in: existingDishes }, is_active: true },
       { $set: { is_active: false } }

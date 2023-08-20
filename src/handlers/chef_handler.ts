@@ -11,9 +11,7 @@ const findAllChefs = async () => {
 
 const getAllChefsPopulated = async () => {
     const chefs = await Chef.find({ is_active: true })
-      .populate("restaurants", "name"); // populate restaurants and select only the name field
-    // Transforming the result to match the format you provided
-    console.log(chefs);
+      .populate("restaurants", "name"); 
     const result = chefs.map((chef) => ({
       _id: chef._id,
       name: chef.name,
@@ -84,7 +82,7 @@ const deleteRestaurantFromChef = async (
 ) => {
   const updatedChef = await Chef.findByIdAndUpdate(
     chefId,
-    { $pull: { restaurants: restaurantId } }, // remove the restaurantId from the restaurants list
+    { $pull: { restaurants: restaurantId } }, 
     { new: true }
   );
   return updatedChef;
@@ -96,7 +94,7 @@ const addRestaurantToChef = async (
 ) => {
   const updatedChef = await Chef.findByIdAndUpdate(
     chefId,
-    { $addToSet: { restaurants: restaurantId } }, // add the restaurantId from the restaurants list
+    { $addToSet: { restaurants: restaurantId } }, 
     { new: true }
   );
   return updatedChef;
@@ -116,13 +114,11 @@ const removeRestaurantFromOtherChefs = async(restaurants: ObjectId[], chefId: st
 };
 const updateChefReferences = async (restaurantId: string, newChefId: string, existingChefId: string) => {
   if (existingChefId.toString() !== newChefId) {
-      // Remove restaurant reference from the previous active chef
       await Chef.findOneAndUpdate(
           { _id: existingChefId, is_active: true },
           { $pull: { restaurants: restaurantId } }
       );
 
-      // Add restaurant reference to the new active chef
       await Chef.findOneAndUpdate(
           { _id: newChefId, is_active: true },
           { $addToSet: { restaurants: restaurantId } }

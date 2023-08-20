@@ -15,10 +15,8 @@ const findAllRestaurants = async () => {
 
 const getAllRestaurantsPopulated = async () => {
   const restaurants = await Restaurant.find({ is_active: true })
-    .populate("chef", "name") // populate chef and select only the name field
-    .populate("dishes", "name"); // populate dishes and select only the name field
-
-  // Transforming the result to match the format you provided
+    .populate("chef", "name") 
+    .populate("dishes", "name"); 
   const result = restaurants.map((restaurant) => ({
     _id: restaurant._id,
     name: restaurant.name,
@@ -26,31 +24,41 @@ const getAllRestaurantsPopulated = async () => {
     chef: restaurant.chef._id,
     chef_name: (restaurant.chef as unknown as IChef).name,
     dishes: restaurant.dishes.map((dish) => dish._id),
-    dishes_names: (restaurant.dishes as unknown as IDish[]).map((dish) => dish.name),
+    dishes_names: (restaurant.dishes as unknown as IDish[]).map(
+      (dish) => dish.name
+    ),
     ranking: restaurant.ranking,
   }));
-  // console.log(result);
   return result;
 };
 
-const updateRestaurants = async (restaurants:object[], chefId:string) =>{
+const updateRestaurants = async (restaurants: object[], chefId: string) => {
   await Restaurant.updateMany(
     { _id: { $in: restaurants }, is_active: true },
     { chef: chefId }
   );
-}
+};
 
-const deleteAllGivenRestaurants = async (restaurants:object[]) =>{
-  const affectedRestaurants = await Restaurant.find({ _id: { $in: restaurants }, is_active: true }).select('dishes');
-  const allDishes = affectedRestaurants.flatMap(restaurant => restaurant.dishes);
-
+const deleteAllGivenRestaurants = async (restaurants: object[]) => {
+  const affectedRestaurants = await Restaurant.find({
+    _id: { $in: restaurants },
+    is_active: true,
+  }).select("dishes");
+  const allDishes = affectedRestaurants.flatMap(
+    (restaurant) => restaurant.dishes
+  );
   await removeAllGivenDishes(allDishes);
 
-  await Restaurant.updateMany(
-    { _id: { $in: restaurants } },
-    { is_active: false }
-  );
+  if(restaurants){
+  restaurants.forEach(async (restaurantId) => {
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (restaurant) {
+      restaurant.is_active = false;
+      await restaurant.save();
+    }
+  });
 }
+};
 
 const findRestaurantsById = async (restaurantId: string) => {
   const restaurant = await Restaurant.findOne({
@@ -100,12 +108,12 @@ const updateRestaurant = async (
 };
 
 const removeRestaurant = async (restaurantId: string) => {
-  const deletedRestaurant = await Restaurant.findByIdAndUpdate(
-    restaurantId,
-    { is_active: false },
-    { new: true }
-  );
-  return deletedRestaurant;
+  const restaurant = await Restaurant.findById(restaurantId);
+  if (restaurant) {
+    restaurant.is_active = false;
+    await restaurant.save();
+    return restaurant;
+  }
 };
 
 const findChefOfRestaurant = async (restaurantId: string) => {
@@ -115,7 +123,7 @@ const findChefOfRestaurant = async (restaurantId: string) => {
 
 const findAllRestaurantDishes = async (restauratnId: string) => {
   const restaurant = await Restaurant.aggregate([
-    { $match: { _id: new ObjectId(restauratnId) }, },
+    { $match: { _id: new ObjectId(restauratnId) } },
     {
       $lookup: {
         from: "dishes",
@@ -146,13 +154,16 @@ const addDishToRestaurant = async (
 ) => {
   const updatedRestaurant = await Restaurant.findByIdAndUpdate(
     restaurantId,
-    { $addToSet: { dishes: dishId }, is_active: true }, // add the dishId from the dishes list
+    { $addToSet: { dishes: dishId }, is_active: true }, 
     { new: true }
   );
   return updatedRestaurant;
 };
 
-const deactivatePreviousRestaurants = async (existingRestaurants: ObjectId[], newRestaurants: ObjectId[]) => {
+const deactivatePreviousRestaurants = async (
+  existingRestaurants: ObjectId[],
+  newRestaurants: ObjectId[]
+) => {
   const restaurantsToDeactivate = existingRestaurants.filter(
     (restId: any) => !newRestaurants.includes(restId.toString())
   );
@@ -163,21 +174,27 @@ const deactivatePreviousRestaurants = async (existingRestaurants: ObjectId[], ne
   );
 };
 
-const removeDishFromOtherRestaurants = async (dishId: string, currentRestaurantId: string) => {
+const removeDishFromOtherRestaurants = async (
+  dishId: string,
+  currentRestaurantId: string
+) => {
   await Restaurant.updateMany(
-      { _id: { $ne: currentRestaurantId }, is_active: true, dishes: dishId },
-      { $pull: { dishes: dishId } }
+    { _id: { $ne: currentRestaurantId }, is_active: true, dishes: dishId },
+    { $pull: { dishes: dishId } }
   );
 };
 
-const removeNewDishesFromOtherRestaurants = async (dishes: string[], currentRestaurantId: string) => {
+const removeNewDishesFromOtherRestaurants = async (
+  dishes: string[],
+  currentRestaurantId: string
+) => {
   await Restaurant.updateMany(
-      { 
-        _id: { $ne: currentRestaurantId }, 
-        dishes: { $in: dishes },
-        is_active: true
-      },
-      { $pullAll: { dishes: dishes } }
+    {
+      _id: { $ne: currentRestaurantId },
+      dishes: { $in: dishes },
+      is_active: true,
+    },
+    { $pullAll: { dishes: dishes } }
   );
 };
 
@@ -196,5 +213,5 @@ export {
   deleteAllGivenRestaurants,
   deactivatePreviousRestaurants,
   removeDishFromOtherRestaurants,
-  removeNewDishesFromOtherRestaurants
+  removeNewDishesFromOtherRestaurants,
 };
