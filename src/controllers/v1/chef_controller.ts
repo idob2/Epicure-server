@@ -102,9 +102,12 @@ const putChef = async (req: Request, res: Response) => {
 
 const deleteChef = async (req: Request, res: Response) => {
   const chefId = req.params.id;
-  const {restaurants} = req.body;
   try {
-    await deleteAllGivenRestaurants(restaurants);
+    const chef = await findChefById(chefId);
+    const restaurants = chef?.restaurants;
+    if(restaurants){
+      await deleteAllGivenRestaurants(restaurants);
+    }
     const deletedChef = await removeChef(chefId);
 
     if (!deletedChef) {
