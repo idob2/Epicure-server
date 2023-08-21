@@ -44,20 +44,21 @@ const deleteAllGivenRestaurants = async (restaurants: object[]) => {
     _id: { $in: restaurants },
     is_active: true,
   }).select("dishes");
-  const allDishes = affectedRestaurants.flatMap(
-    (restaurant) => restaurant.dishes
-  );
+
+  const allDishes = affectedRestaurants.flatMap((restaurant) => restaurant.dishes);
   await removeAllGivenDishes(allDishes);
 
-  if(restaurants){
-  restaurants.forEach(async (restaurantId) => {
-    const restaurant = await Restaurant.findById(restaurantId);
-    if (restaurant) {
-      restaurant.is_active = false;
-      await restaurant.save();
+  if (restaurants) {
+    for (const restaurantId of restaurants) {
+      const restaurant = await Restaurant.findById(restaurantId);
+      if (restaurant) {
+        restaurant.dishes = [];
+        restaurant.markModified('dishes'); // Marking dishes as modified
+        restaurant.is_active = false;
+        await restaurant.save();
+      }
     }
-  });
-}
+  }
 };
 
 const findRestaurantsById = async (restaurantId: string) => {

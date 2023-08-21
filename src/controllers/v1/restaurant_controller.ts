@@ -128,7 +128,6 @@ const putRestaurant = async (req: Request, res: Response) => {
   }
 };
 
-
 const deleteRestaurant = async (req: Request, res: Response) => {
   const restaurantId = req.params.id;
   try {
@@ -136,15 +135,14 @@ const deleteRestaurant = async (req: Request, res: Response) => {
     if (!restaurant) {
       return res.status(404).json({ error: "Restaurant not found." });
     }
-
     const restaurantDishes = restaurant.dishes;
-    restaurantDishes.forEach(async (dish) => {
+    for (const dish of restaurantDishes) {
       await removeDish(String(dish._id));
       await deleteDishFromRestaurant(
         new ObjectId(restaurantId),
         String(dish._id)
       );
-    });
+    }
     const chefId = restaurant.chef;
     const updatedChef = await deleteRestaurantFromChef(chefId, restaurantId);
     if (!updatedChef) {
@@ -152,7 +150,6 @@ const deleteRestaurant = async (req: Request, res: Response) => {
         error: "Chef not found or the restaurant was not linked to any chef.",
       });
     }
-    
     const deletedRestaurant = await removeRestaurant(restaurantId);
     if (!deletedRestaurant) {
       return res.status(404).json({ error: "Restaurant not found." });
@@ -162,6 +159,7 @@ const deleteRestaurant = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const getDishesOfRestaurant = async (req: Request, res: Response) => {
   const restaurantId = req.params.id;
