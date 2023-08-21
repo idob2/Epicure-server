@@ -7,7 +7,7 @@ import apiRouter from "./routes/api_router";
 require('dotenv').config();
 
 const app = express();
-const allowedOrigins = ['http://ec2-18-117-229-138.us-east-2.compute.amazonaws.com', 'http://18.117.229.138', 'http://ec2-3-137-173-135.us-east-2.compute.amazonaws.com', 'http://3.137.173.135', 'http://localhost:4200'];
+const allowedOrigins = ['http://ec2-18-117-229-138.us-east-2.compute.amazonaws.com', 'http://18.117.229.138', 'http://ec2-3-137-173-135.us-east-2.compute.amazonaws.com', 'http://3.137.173.135', 'http://localhost:4200', 'http://localhost:3001'];
 
 app.use(cors({
   origin: allowedOrigins,

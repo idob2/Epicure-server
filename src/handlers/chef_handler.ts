@@ -113,7 +113,6 @@ const removeRestaurantFromOtherChefs = async(restaurants: ObjectId[], chefId: st
    }
 };
 const updateChefReferences = async (restaurantId: string, newChefId: string, existingChefId: string) => {
-  if (existingChefId.toString() !== newChefId) {
       await Chef.findOneAndUpdate(
           { _id: existingChefId, is_active: true },
           { $pull: { restaurants: restaurantId } }
@@ -123,7 +122,6 @@ const updateChefReferences = async (restaurantId: string, newChefId: string, exi
           { _id: newChefId, is_active: true },
           { $addToSet: { restaurants: restaurantId } }
       );
-  }
 };
 
 
