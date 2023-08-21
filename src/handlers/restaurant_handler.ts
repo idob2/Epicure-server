@@ -111,12 +111,11 @@ const updateRestaurant = async (
 const removeRestaurant = async (restaurantId: string) => {
   const restaurants = [new ObjectId(restaurantId)];
   await deleteAllGivenRestaurants(restaurants);
-  const newRestaurant = await findRestaurantsById(restaurantId);
+  const newRestaurant = await Restaurant.findById(restaurantId);
   return newRestaurant;
   // const restaurant = await Restaurant.findById(restaurantId);
   // if (restaurant) {
   //   restaurant.is_active = false;
-  //   console.log("here");
   //   await restaurant.save();
   //   return restaurant;
   // }
