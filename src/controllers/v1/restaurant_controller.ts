@@ -16,7 +16,7 @@ import {
   addRestaurantToChef,
   updateChefReferences,
 } from "../../handlers/chef_handler";
-import { removeDish, updateDishReferences } from "../../handlers/dish_handler";
+import { assignDishesToRestaurant, removeDish, updateDishReferences } from "../../handlers/dish_handler";
 import { ObjectId } from "mongodb";
 
 const getAllRestaurants = async (req: Request, res: Response) => {
@@ -77,6 +77,9 @@ const postRestaurant = async (req: Request, res: Response) => {
   const { name, image, chef, dishes, ranking } = req.body;
   try {
     const restaurantId = new ObjectId();
+    await removeNewDishesFromOtherRestaurants(dishes, restaurantId.toString());
+
+    await assignDishesToRestaurant(restaurantId.toString(), dishes);
     const newRestaurant = await addRestaurant(
       restaurantId,
       name,
@@ -92,6 +95,7 @@ const postRestaurant = async (req: Request, res: Response) => {
         error: "Chef not found or the restaurant was not linked to any chef.",
       });
     }
+
 
     res.json(newRestaurant);
   } catch (error: any) {
