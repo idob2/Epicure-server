@@ -12,6 +12,9 @@ const findAllChefs = async () => {
 const getAllChefsPopulated = async () => {
     const chefs = await Chef.find({ is_active: true })
       .populate("restaurants", "name"); 
+    if(chefs.length === 0){
+      return chefs;
+    }
     const result = chefs.map((chef) => ({
       _id: chef._id,
       name: chef.name,

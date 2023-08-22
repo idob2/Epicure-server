@@ -17,6 +17,9 @@ const getAllRestaurantsPopulated = async () => {
   const restaurants = await Restaurant.find({ is_active: true })
     .populate("chef", "name") 
     .populate("dishes", "name"); 
+    if(restaurants.length === 0){
+      return restaurants;
+    }
   const result = restaurants.map((restaurant) => ({
     _id: restaurant._id,
     name: restaurant.name,
