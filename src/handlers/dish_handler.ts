@@ -108,7 +108,12 @@ const updateDishReferences = async (restaurantId: string, newDishes: string[], e
       { $set: { is_active: false } }
   );
 };
-
+const assignDishesToRestaurant = async (restaurantId: string, newDishes: string[]) => {
+  await Dish.updateMany(
+      { _id: { $in: newDishes }, is_active: true },
+      { $set: { restaurant: restaurantId } }
+  );
+};
 
 
 export {
@@ -120,5 +125,6 @@ export {
   getAllDishesPopulated,
   removeAllGivenDishes,
   updateDishReferences,
+  assignDishesToRestaurant
 };
 
